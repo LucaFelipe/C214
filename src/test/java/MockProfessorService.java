@@ -16,20 +16,46 @@ public class MockProfessorService {
         }
 
         ObjectMapper objectMapper = new ObjectMapper();
-        JsonNode jsonNode = objectMapper.readTree(jsonResponse);
+        JsonNode jsonNode;
+
+        try {
+            jsonNode = objectMapper.readTree(jsonResponse);
+        } catch (Exception e) {
+            throw new Exception("Erro ao tentar ler o JSON", e);
+        }
 
         JsonNode nomeNode = jsonNode.get("nomeDoProfessor");
         JsonNode horarioNode = jsonNode.get("horarioDeAtendimento");
         JsonNode salaNode = jsonNode.get("sala");
 
-        if (nomeNode == null || horarioNode == null || salaNode == null || !salaNode.isInt()) {
-            throw new Exception("JSON inválido ou campos obrigatórios ausentes ou mal formatados.");
+        if (nomeNode == null || nomeNode.isNull() || !nomeNode.isTextual()) {
+            throw new Exception("Campo 'nomeDoProfessor' inválido ou ausente");
         }
 
-        String nome = nomeNode.asText();
-        String horario = horarioNode.asText();
+        String nome = nomeNode.asText().trim();
+        if (nome.isEmpty()) {
+            throw new Exception("Campo 'nomeDoProfessor' está vazio");
+        }
+
+        if (horarioNode == null || horarioNode.isNull() || !horarioNode.isTextual()) {
+            throw new Exception("Campo 'horarioDeAtendimento' inválido ou ausente");
+        }
+
+        if (salaNode == null || salaNode.isNull() || !salaNode.isInt()) {
+            throw new Exception("Campo 'sala' inválido ou ausente");
+        }
+
         int sala = salaNode.asInt();
+        if (sala <= 0) {
+            throw new Exception("Valor de sala deve ser maior que zero");
+        }
+
         int predio = calcularPredio(sala);
+        if (predio <= 0 || predio > 20) { // ajusta esse limite como achar melhor
+            throw new Exception("Prédio calculado está fora dos limites válidos");
+        }
+
+        String horario = horarioNode.asText();
 
         return String.format("Professor: %s | Horário: %s | Sala: %d | Prédio: %d", nome, horario, sala, predio);
     }
@@ -38,3 +64,4 @@ public class MockProfessorService {
         return (sala - 1) / 5 + 1;
     }
 }
+

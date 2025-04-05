@@ -31,12 +31,58 @@ public class TestesProfessor{
 
     @Test
     public void deveCalcularPredioCorretamente() throws Exception {
+        String json = "{\"nomeDoProfessor\":\"Maria\",\"horarioDeAtendimento\":\"14h\",\"sala\":4}";
+        when(repositorioMock.buscarHorarioProfessor("Maria")).thenReturn(json);
+
+        String resultado = service.obterHorarioAtendimento("Maria");
+        assertTrue(resultado.contains("Prédio: 1"));
+    }
+
+    @Test
+    public void deveCalcularPredioCorretamente2() throws Exception {
+        String json = "{\"nomeDoProfessor\":\"Maria\",\"horarioDeAtendimento\":\"14h\",\"sala\":7}";
+        when(repositorioMock.buscarHorarioProfessor("Maria")).thenReturn(json);
+
+        String resultado = service.obterHorarioAtendimento("Maria");
+        assertTrue(resultado.contains("Prédio: 2"));
+    }
+
+    @Test
+    public void deveCalcularPredioCorretamente3() throws Exception {
         String json = "{\"nomeDoProfessor\":\"Maria\",\"horarioDeAtendimento\":\"14h\",\"sala\":12}";
         when(repositorioMock.buscarHorarioProfessor("Maria")).thenReturn(json);
 
         String resultado = service.obterHorarioAtendimento("Maria");
         assertTrue(resultado.contains("Prédio: 3"));
     }
+
+    @Test
+    public void deveCalcularPredioCorretamente4() throws Exception {
+        String json = "{\"nomeDoProfessor\":\"Maria\",\"horarioDeAtendimento\":\"14h\",\"sala\":18}";
+        when(repositorioMock.buscarHorarioProfessor("Maria")).thenReturn(json);
+
+        String resultado = service.obterHorarioAtendimento("Maria");
+        assertTrue(resultado.contains("Prédio: 4"));
+    }
+
+    @Test
+    public void deveCalcularPredioCorretamente5() throws Exception {
+        String json = "{\"nomeDoProfessor\":\"Maria\",\"horarioDeAtendimento\":\"14h\",\"sala\":21}";
+        when(repositorioMock.buscarHorarioProfessor("Maria")).thenReturn(json);
+
+        String resultado = service.obterHorarioAtendimento("Maria");
+        assertTrue(resultado.contains("Prédio: 5"));
+    }
+
+    @Test
+    public void deveCalcularPredioCorretamente6() throws Exception {
+        String json = "{\"nomeDoProfessor\":\"Maria\",\"horarioDeAtendimento\":\"14h\",\"sala\":27}";
+        when(repositorioMock.buscarHorarioProfessor("Maria")).thenReturn(json);
+
+        String resultado = service.obterHorarioAtendimento("Maria");
+        assertTrue(resultado.contains("Prédio: 6"));
+    }
+
 
     @Test
     public void deveManterNomeProfessor() throws Exception {
@@ -117,4 +163,55 @@ public class TestesProfessor{
             service.obterHorarioAtendimento("Julia");
         });
     }
+
+    @Test
+    public void deveLancarExcecaoSeNomeDoProfessorEstiverVazio() {
+        String json = "{\"nomeDoProfessor\":\"\",\"horarioDeAtendimento\":\"11h\",\"sala\":3}";
+        when(repositorioMock.buscarHorarioProfessor("")).thenReturn(json);
+
+        assertThrows(Exception.class, () -> {
+            service.obterHorarioAtendimento("");
+        });
+    }
+
+    @Test
+    public void deveLancarExcecaoSeSalaForNegativa() {
+        String json = "{\"nomeDoProfessor\":\"Bruno\",\"horarioDeAtendimento\":\"12h\",\"sala\":-1}";
+        when(repositorioMock.buscarHorarioProfessor("Bruno")).thenReturn(json);
+
+        assertThrows(Exception.class, () -> {
+            service.obterHorarioAtendimento("Bruno");
+        });
+    }
+
+    @Test
+    public void deveLancarExcecaoSeSalaForNula() {
+        String json = "{\"nomeDoProfessor\":\"Fernanda\",\"horarioDeAtendimento\":\"15h\",\"sala\":null}";
+        when(repositorioMock.buscarHorarioProfessor("Fernanda")).thenReturn(json);
+
+        assertThrows(Exception.class, () -> {
+            service.obterHorarioAtendimento("Fernanda");
+        });
+    }
+
+    @Test
+    public void deveLancarExcecaoSeHorarioForNulo() {
+        String json = "{\"nomeDoProfessor\":\"Thiago\",\"horarioDeAtendimento\":null,\"sala\":5}";
+        when(repositorioMock.buscarHorarioProfessor("Thiago")).thenReturn(json);
+
+        assertThrows(Exception.class, () -> {
+            service.obterHorarioAtendimento("Thiago");
+        });
+    }
+
+    @Test
+    public void deveLancarExcecaoSeNomeSalaEstiverErrada() {
+        String json = "{\"nomeDoProfessor\":\"Daniel\",\"horarioDeAtendimento\":\"10h\",\"salinha\":2}";
+        when(repositorioMock.buscarHorarioProfessor("Daniel")).thenReturn(json);
+
+        assertThrows(Exception.class, () -> {
+            service.obterHorarioAtendimento("Daniel");
+        });
+    }
+
 }
